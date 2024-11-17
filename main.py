@@ -7,136 +7,164 @@ from empleado.class_empleado import Empleado
 from tkinter import Tk, Label, Button, Entry, Frame, messagebox, mainloop
 import mysql.connector
 import pymysql
+import pymysql
+import mysql.connector
 
-# Conectar al servidor MySQL
-conexion = mysql.connector.connect(
-    host='localhost',  # Dirección del servidor MySQL
-    user='root',       # Usuario de MySQL
-    password=''        # Contraseña si es aplicable
-)
+# Configuración de la conexión inicial (sin base de datos)
+host = 'localhost'
+user = 'root'  # Cambia esto por tu usuario de MySQL
+password = ''  # Cambia esto por tu contraseña de MySQL
+database = 'prueba2'  # Nombre de la base de datos
 
-cursor = conexion.cursor()
-
-# Verificar si la base de datos ya existe
-cursor.execute("SHOW DATABASES")
-bases_de_datos = [db[0] for db in cursor.fetchall()]
-
-if "prueba" not in bases_de_datos:
-    cursor.execute("CREATE DATABASE prueba2")
-    print("Base de datos creada.")
-else:
-    print("La base de datos ya existe.")
-
-# Usar la base de datos
-cursor.execute("USE prueba2")
-
-# Verificar si las tablas existen antes de crearlas
-tablas_existentes = []
-cursor.execute("SHOW TABLES")
-tablas_existentes = [tabla[0] for tabla in cursor.fetchall()]
-
-tablas_a_crear = {
-    "departamento": """
-        CREATE TABLE departamento (
-            id_departamento INT(11) NOT NULL,
-            password_depto VARCHAR(10) NOT NULL,
-            id_gerente INT(11) NOT NULL,
-            id_emp INT(11) NOT NULL,
-            id_admin INT(11) NOT NULL,
-            PRIMARY KEY (id_departamento)
-        )
-    """,
-    "empleado": """
-        CREATE TABLE empleado (
-            id_empleado VARCHAR(12) NOT NULL,
-            nombre VARCHAR(45) NOT NULL,
-            direccion VARCHAR(45) NOT NULL,
-            email VARCHAR(45) NOT NULL,
-            telefono INT(11) NOT NULL,
-            fecha_inicio_contrato VARCHAR(100) NOT NULL,
-            salario FLOAT NOT NULL,
-            password_empleado VARCHAR(50) NOT NULL,
-            PRIMARY KEY (id_empleado)
-        )
-    """,
-    "gerente": """
-        CREATE TABLE gerente (
-            id_gerente INT(11) NOT NULL,
-            password_gerente VARCHAR(10) NOT NULL,
-            id_empleado INT(11) NOT NULL,
-            PRIMARY KEY (id_gerente),
-            KEY id_empleado_idx (id_empleado)
-        )
-    """,
-    "informe": """
-        CREATE TABLE informe (
-            idinforme INT(11) NOT NULL,
-            ideempleado INT(11) NOT NULL,
-            iddepto INT(11) NOT NULL,
-            idregistros INT(11) NOT NULL,
-            id_proyecto INT(11) NOT NULL,
-            PRIMARY KEY (idinforme),
-            KEY idempl_idx (ideempleado),
-            KEY idproyect_idx (id_proyecto),
-            KEY iddepto_idx (iddepto),
-            KEY idregistro_idx (idregistros)
-        )
-    """,
-    "proyecto": """
-        CREATE TABLE proyecto (
-            id_proyecto INT(11) NOT NULL,
-            nombre VARCHAR(45) NOT NULL,
-            descripcion VARCHAR(45) NOT NULL,
-            fecha_inicio INT(11) NOT NULL,
-            password_proyecto VARCHAR(10) NOT NULL,
-            idemp INT(11) NOT NULL,
-            PRIMARY KEY (id_proyecto),
-            KEY idempl_idx (idemp)
-        )
-    """,
-    "registro_tiempo": """
-        CREATE TABLE registro_tiempo (
-            id_registro_tiempo INT(11) NOT NULL,
-            fecha INT(11) NOT NULL,
-            hrs_trabajadas INT(11) NOT NULL,
-            desc_tarea VARCHAR(100) NOT NULL,
-            idproyecto INT(11) NOT NULL,
-            idemp INT(11) NOT NULL,
-            PRIMARY KEY (id_registro_tiempo),
-            KEY ideemp_idx (idemp),
-            KEY idproyecto_idx (idproyecto)
-        )
-    """
-}
-
-# Crear tablas solo si no existen
-for nombre_tabla, sql_creacion in tablas_a_crear.items():
-    if nombre_tabla not in tablas_existentes:
-        cursor.execute(sql_creacion)
-        print(f"Tabla '{nombre_tabla}' creada.")
-    else:
-        print(f"La tabla '{nombre_tabla}' ya existe.")
-
-# Añadir las restricciones (podrías omitir si ya están aplicadas)
 try:
+    # Conexión al servidor MySQL sin base de datos específica
+    conexion = mysql.connector.connect(
+        host=host,
+        user=user,
+        password=password
+    )
+    cursor = conexion.cursor()
+
+    # Verificar si la base de datos ya existe
+    cursor.execute("SHOW DATABASES")
+    bases_de_datos = [db[0] for db in cursor.fetchall()]
+
+    if database not in bases_de_datos:
+        cursor.execute(f"CREATE DATABASE {database}")
+        print(f"Base de datos '{database}' creada.")
+    else:
+        print(f"La base de datos '{database}' ya existe.")
+
+    # Conectar a la base de datos existente o recién creada
+    cursor.execute(f"USE {database}")
+
+    # Verificar si las tablas existen antes de crearlas
+    cursor.execute("SHOW TABLES")
+    tablas_existentes = [tabla[0] for tabla in cursor.fetchall()]
+
+    tablas_a_crear = {
+        "departamento": """
+            CREATE TABLE departamento (
+                id_departamento INT(11) NOT NULL,
+                password_depto VARCHAR(10) NOT NULL,
+                id_gerente INT(11) NOT NULL,
+                id_emp VARCHAR(12) NOT NULL,  -- Se usa VARCHAR para RUT
+                id_admin INT(11) NOT NULL,
+                PRIMARY KEY (id_departamento)
+            )
+        """,
+        "empleado": """
+            CREATE TABLE empleado (
+                id_empleado VARCHAR(12) NOT NULL,  -- RUT como clave primaria
+                nombre VARCHAR(45) NOT NULL,
+                direccion VARCHAR(45) NOT NULL,
+                email VARCHAR(45) NOT NULL,
+                telefono INT(11) NOT NULL,
+                fecha_inicio_contrato VARCHAR(100) NOT NULL,
+                salario FLOAT NOT NULL,
+                password_empleado VARCHAR(50) NOT NULL,
+                PRIMARY KEY (id_empleado)
+            )
+        """,
+        "gerente": """
+            CREATE TABLE gerente (
+                id_gerente INT(11) NOT NULL,
+                password_gerente VARCHAR(10) NOT NULL,
+                id_empleado VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                PRIMARY KEY (id_gerente),
+                KEY id_empleado_idx (id_empleado)
+            )
+        """,
+        "informe": """
+            CREATE TABLE informe (
+                idinforme INT(11) NOT NULL,
+                ideempleado VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                iddepto INT(11) NOT NULL,
+                idregistros INT(11) NOT NULL,
+                id_proyecto INT(11) NOT NULL,
+                PRIMARY KEY (idinforme),
+                KEY idempl_idx (ideempleado),
+                KEY idproyect_idx (id_proyecto),
+                KEY iddepto_idx (iddepto),
+                KEY idregistro_idx (idregistros)
+            )
+        """,
+        "proyecto": """
+            CREATE TABLE proyecto (
+                id_proyecto INT(11) NOT NULL,
+                nombre VARCHAR(45) NOT NULL,
+                descripcion VARCHAR(45) NOT NULL,
+                fecha_inicio INT(11) NOT NULL,
+                password_proyecto VARCHAR(10) NOT NULL,
+                idemp VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                PRIMARY KEY (id_proyecto),
+                KEY idempl_idx (idemp)
+            )
+        """,
+        "registro_tiempo": """
+            CREATE TABLE registro_tiempo (
+                id_registro_tiempo INT(11) NOT NULL,
+                fecha INT(11) NOT NULL,
+                hrs_trabajadas INT(11) NOT NULL,
+                desc_tarea VARCHAR(100) NOT NULL,
+                idproyecto INT(11) NOT NULL,
+                idemp VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                PRIMARY KEY (id_registro_tiempo),
+                KEY ideemp_idx (idemp),
+                KEY idproyecto_idx (idproyecto)
+            )
+        """
+    }
+
+    # Crear tablas solo si no existen
+    for nombre_tabla, sql_creacion in tablas_a_crear.items():
+        if nombre_tabla not in tablas_existentes:
+            cursor.execute(sql_creacion)
+            print(f"Tabla '{nombre_tabla}' creada.")
+        else:
+            print(f"La tabla '{nombre_tabla}' ya existe.")
+
+    # Añadir restricciones de clave foránea
     restricciones = [
-        "ALTER TABLE gerente ADD CONSTRAINT id_empleado FOREIGN KEY (id_empleado) REFERENCES empleado (id_empleado)",
-        "ALTER TABLE departamento ADD CONSTRAINT idadmin FOREIGN KEY (id_admin) REFERENCES administrador (id_administrador), ADD CONSTRAINT idemp FOREIGN KEY (id_emp) REFERENCES empleado (id_empleado), ADD CONSTRAINT idgerente FOREIGN KEY (id_gerente) REFERENCES gerente (id_gerente)",
-        "ALTER TABLE informe ADD CONSTRAINT iddepto FOREIGN KEY (iddepto) REFERENCES departamento (id_departamento), ADD CONSTRAINT idemple FOREIGN KEY (ideempleado) REFERENCES empleado (id_empleado), ADD CONSTRAINT idproyectoo FOREIGN KEY (id_proyecto) REFERENCES proyecto (id_proyecto), ADD CONSTRAINT idregistro FOREIGN KEY (idregistros) REFERENCES registro_tiempo (id_registro_tiempo)",
-        "ALTER TABLE proyecto ADD CONSTRAINT idempl FOREIGN KEY (idemp) REFERENCES empleado (id_empleado)",
-        "ALTER TABLE registro_tiempo ADD CONSTRAINT ideemp FOREIGN KEY (idemp) REFERENCES empleado (id_empleado), ADD CONSTRAINT idproyecto FOREIGN KEY (idproyecto) REFERENCES proyecto (id_proyecto)"
+        "ALTER TABLE gerente ADD CONSTRAINT fk_empleado FOREIGN KEY (id_empleado) REFERENCES empleado (id_empleado)",
+        "ALTER TABLE departamento ADD CONSTRAINT fk_idadmin FOREIGN KEY (id_admin) REFERENCES empleado (id_empleado), ADD CONSTRAINT fk_idemp FOREIGN KEY (id_emp) REFERENCES empleado (id_empleado), ADD CONSTRAINT fk_idgerente FOREIGN KEY (id_gerente) REFERENCES gerente (id_gerente)",
+        "ALTER TABLE informe ADD CONSTRAINT fk_iddepto FOREIGN KEY (iddepto) REFERENCES departamento (id_departamento), ADD CONSTRAINT fk_idemple FOREIGN KEY (ideempleado) REFERENCES empleado (id_empleado), ADD CONSTRAINT fk_idproyecto FOREIGN KEY (id_proyecto) REFERENCES proyecto (id_proyecto), ADD CONSTRAINT fk_idregistro FOREIGN KEY (idregistros) REFERENCES registro_tiempo (id_registro_tiempo)",
+        "ALTER TABLE proyecto ADD CONSTRAINT fk_idempl FOREIGN KEY (idemp) REFERENCES empleado (id_empleado)",
+        "ALTER TABLE registro_tiempo ADD CONSTRAINT fk_ideemp FOREIGN KEY (idemp) REFERENCES empleado (id_empleado), ADD CONSTRAINT fk_idproyecto FOREIGN KEY (idproyecto) REFERENCES proyecto (id_proyecto)"
     ]
 
     for restriccion in restricciones:
-        cursor.execute(restriccion)
-except mysql.connector.Error as err:
-    print(f"Error al aplicar la restricción: {err}")
+        try:
+            cursor.execute(restriccion)
+        except mysql.connector.Error as err:
+            print(f"Error al aplicar la restricción: {err}")
 
-print("Tablas y restricciones verificadas exitosamente.")
+    print("Tablas y restricciones verificadas exitosamente.")
 
-# Cerrar la conexión
-cursor.close()
-conexion.close()
+    cursor.close()
+    conexion.close()
+
+    # Conexión final con pymysql para realizar operaciones
+    connection = pymysql.connect(
+        host=host,
+        user=user,
+        password=password,
+        database=database
+    )
+    print("Conexión exitosa a la base de datos.")
+
+    cursor = connection.cursor()
+    cursor.execute("SHOW TABLES")
+    for table in cursor.fetchall():
+        print(table)
+
+    cursor.close()
+    connection.close()
+
+except mysql.connector.Error as e:
+    print(f"Error de MySQL: {e}")
+except pymysql.MySQLError as e:
+    print(f"Error de PyMySQL: {e}")
 
 class Login:
     def __init__(self):
@@ -387,6 +415,19 @@ class Login:
                                   bg=fondo3)
         self.titulo_c_emp.pack(side="top", pady=40)
 
+        ##RUT
+        self.label_r_emp = Label(self.frame_inferior,
+                                 text="RUT",
+                                 font=("Helvetica", 18),
+                                 bg=fondo3,
+                                 fg="black")
+        self.label_r_emp.grid(row=8, column=0, padx=10, sticky="e")
+        self.entry_r_emp = Entry(self.frame_inferior,
+                                 bd=0,
+                                 width=28,
+                                 font=("Helvetica", 15))
+        self.entry_r_emp.grid(row=8, column=1, columnspan=3, padx=5, sticky="w")
+
         ###NOMBRE###
 
         self.label_n_emp = Label(self.frame_inferior,
@@ -493,11 +534,14 @@ class Login:
                                       width=16,
                                       font=("Helvetica", 12),
                                       command=self.ingresar)
-        self.boton_ingresar2.grid(row=7, column=1, pady=35)
+        self.boton_ingresar2.grid(row=9, column=1, pady=15)
 
     def ingresar(self):
 
         while True:
+
+            rut = self.entry_r_emp.get()
+
             # Validación del nombre
             nombre = self.entry_n_emp.get()
             if not nombre:
@@ -577,7 +621,7 @@ class Login:
             else:
                 #Hash de la contraseña usando SHA-256
                 contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
-                emp = Administrador.Crear_empleado(self, nombre, direccion, email,
+                emp = Administrador.Crear_empleado(self, rut, nombre, direccion, email,
                                                telefono, f_i_emp, salario,
                                                contrasena_hash)
                 messagebox.showinfo("", "¡Empleado agregado correctamente!")

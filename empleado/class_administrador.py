@@ -12,7 +12,7 @@ class Administrador(Empleado):
         self.idAdministrador = idAdministrador
         self.passwordAdministrador = passwordAdministrador
 
-    def Crear_empleado(self, nombre, direccion, email, telefono, fecha_inicio_contrato, salario,
+    def Crear_empleado(self, id_empleado, nombre, direccion, email, telefono, fecha_inicio_contrato, salario,
                        password_empleado):
         # Conexión a la base de datos
         try:
@@ -20,7 +20,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
             print("Conexión a la base de datos correcta")
@@ -34,8 +34,8 @@ class Administrador(Empleado):
         password_hash = bcrypt.hashpw(password_encode, salt)
 
         # Consulta SQL
-        cursor = "INSERT INTO empleado (nombre, direccion, email, telefono, fecha_inicio_contrato, salario, password_empleado) VALUES ('{}', '{}', '{}', {}, '{}', {}, '{}')".format(
-             nombre, direccion, email, telefono, fecha_inicio_contrato, salario, password_hash.decode()
+        cursor = "INSERT INTO empleado (id_empleado, nombre, direccion, email, telefono, fecha_inicio_contrato, salario, password_empleado) VALUES ('{}', '{}', '{}', '{}', {}, '{}', {}, '{}')".format(
+             id_empleado, nombre, direccion, email, telefono, fecha_inicio_contrato, salario, password_hash.decode()
         )
 
         print("Creación de empleado completada")
@@ -159,7 +159,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
             print("Conexión a la base de datos correcta")
@@ -197,7 +197,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
             print("Conexión a la base de datos correcta.")
@@ -243,7 +243,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
         except Exception as e:
@@ -287,7 +287,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
             print("Conexion bd correcta")
@@ -319,7 +319,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
             print("Conexión a la base de datos correcta")
