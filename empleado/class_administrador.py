@@ -58,7 +58,7 @@ class Administrador(Empleado):
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
             print("Conexión a la base de datos correcta.")

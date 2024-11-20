@@ -9,6 +9,8 @@ import mysql.connector
 import pymysql
 import pymysql
 import mysql.connector
+from itertools import cycle
+
 
 # Configuración de la conexión inicial (sin base de datos)
 host = 'localhost'
@@ -421,26 +423,26 @@ class Login:
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_r_emp.grid(row=8, column=0, padx=10, sticky="e")
+        self.label_r_emp.grid(row=0, column=0, padx=10, sticky="e")
         self.entry_r_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_r_emp.grid(row=8, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_r_emp.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
 
         ###NOMBRE###
 
         self.label_n_emp = Label(self.frame_inferior,
-                                 text="Nombre Completo",
+                                 text="Nombre completo",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_n_emp.grid(row=0, column=0, padx=10, sticky="e")
+        self.label_n_emp.grid(row=1, column=0, padx=10, sticky="e")
         self.entry_n_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_n_emp.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_n_emp.grid(row=1, column=1, columnspan=3, padx=5, sticky="w")
 
         ###DIRECCION###
 
@@ -449,12 +451,12 @@ class Login:
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_d_emp.grid(row=1, column=0, padx=10, sticky="e")
+        self.label_d_emp.grid(row=2, column=0, padx=10, sticky="e")
         self.entry_d_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_d_emp.grid(row=1, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_d_emp.grid(row=2, column=1, columnspan=3, padx=5, sticky="w")
 
         ###EMAIL###
 
@@ -463,12 +465,12 @@ class Login:
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_e_emp.grid(row=2, column=0, padx=10, sticky="e")
+        self.label_e_emp.grid(row=3, column=0, padx=10, sticky="e")
         self.entry_e_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_e_emp.grid(row=2, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_e_emp.grid(row=3, column=1, columnspan=3, padx=5, sticky="w")
 
         ###TELEFONO###
 
@@ -477,12 +479,12 @@ class Login:
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_t_emp.grid(row=3, column=0, padx=10, sticky="e")
+        self.label_t_emp.grid(row=4, column=0, padx=10, sticky="e")
         self.entry_t_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_t_emp.grid(row=3, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_t_emp.grid(row=4, column=1, columnspan=3, padx=5, sticky="w")
 
         ###FECHA DE INICIO DE CONTRATO###
 
@@ -491,12 +493,12 @@ class Login:
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_f_emp.grid(row=4, column=0, padx=10, sticky="e")
+        self.label_f_emp.grid(row=5, column=0, padx=10, sticky="e")
         self.entry_f_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_f_emp.grid(row=4, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_f_emp.grid(row=5, column=1, columnspan=3, padx=5, sticky="w")
 
         ###SALARIO###
 
@@ -505,27 +507,27 @@ class Login:
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_s_emp.grid(row=5, column=0, padx=10, sticky="e")
+        self.label_s_emp.grid(row=6, column=0, padx=10, sticky="e")
         self.entry_s_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15))
-        self.entry_s_emp.grid(row=5, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_s_emp.grid(row=6, column=1, columnspan=3, padx=5, sticky="w")
 
         ###PASSWORD EMPLEADO###
 
         self.label_p_emp = Label(self.frame_inferior,
-                                 text="Contraseña Empleado",
+                                 text="Contraseña empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
-        self.label_p_emp.grid(row=6, column=0, padx=10, sticky="e")
+        self.label_p_emp.grid(row=7, column=0, padx=10, sticky="e")
         self.entry_p_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=28,
                                  font=("Helvetica", 15),
                                  show="●")
-        self.entry_p_emp.grid(row=6, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_p_emp.grid(row=7, column=1, columnspan=3, padx=5, sticky="w")
 
         ###BOTON INGRESAR###
 
@@ -536,11 +538,39 @@ class Login:
                                       command=self.ingresar)
         self.boton_ingresar2.grid(row=9, column=1, pady=15)
 
+
     def ingresar(self):
 
         while True:
-
+            #Validación de rut
             rut = self.entry_r_emp.get()
+            # Verificar si el RUT está vacío
+            if not rut:
+                messagebox.showwarning("Campo Vacío", "El campo de RUT no puede estar vacío.")
+                break
+
+            # Verificar el formato del RUT (dígitos, guión, y dígito verificador)
+            if not re.match(r'^\d{1,8}-[\dkK]$', rut):
+                messagebox.showwarning("Formato Inválido", "El RUT debe tener el formato 12345678-K.")
+                break
+
+            # Separar el cuerpo del RUT y el dígito verificador
+            cuerpo, dv = rut.split('-')
+            dv = dv.upper()  # Convertir el dígito verificador a mayúscula si es necesario
+
+            # Calcular el dígito verificador esperado
+            reversed_digits = map(int, reversed(cuerpo))
+            factors = cycle(range(2, 8))
+            suma = sum(d * f for d, f in zip(reversed_digits, factors))
+            dv_calculado = str((-suma) % 11)
+            if dv_calculado == '10':
+                dv_calculado = 'K'
+
+            # Comparar el dígito verificador ingresado con el calculado
+            if dv != dv_calculado:
+                messagebox.showwarning("RUT Incorrecto", "El RUT ingresado no es válido.")
+                break
+
 
             # Validación del nombre
             nombre = self.entry_n_emp.get()
@@ -619,7 +649,6 @@ class Login:
                 messagebox.showwarning("Contraseña Inválida", "La contraseña debe contener al menos un número.")
                 return None
             else:
-                #Hash de la contraseña usando SHA-256
                 contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
                 emp = Administrador.Crear_empleado(self, rut, nombre, direccion, email,
                                                telefono, f_i_emp, salario,
@@ -635,10 +664,10 @@ class Login:
 
     def v_e_emp(self):
         self.v_e_emp = Tk()
-        self.v_e_emp.geometry("400x700")
+        self.v_e_emp.geometry("800x500")
         self.v_e_emp.title("Editar Empleado")
 
-        fondo4 = "#9fbbf3"
+        fondo4 = "#ff6347"
 
         self.frame_superior = Frame(self.v_e_emp)
         self.frame_superior.configure(bg=fondo4)
@@ -653,120 +682,120 @@ class Login:
 
         self.titulo_e_emp = Label(self.frame_superior,
                                   text="Editar Empleado",
-                                  font=("Calisto MT", 36, "bold"),
+                                  font=("Tahoma", 30, "bold"),
                                   bg=fondo4)
         self.titulo_e_emp.pack(side="top", pady=20)
 
-        ###IDEMPLEADO###
+        ###RUT/IDEMPLEADO
 
         self.label_i_emp = Label(self.frame_inferior,
-                                 text="Id Empleado",
-                                 font=("Arial", 18),
+                                 text="RUT del Empleado (xxxxxxxx-x)",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_i_emp.grid(row=0, column=0, padx=10, sticky="e")
         self.entry_i_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_i_emp.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
 
         ###NOMBRE###
 
         self.label_n_emp = Label(self.frame_inferior,
-                                 text="Nombre",
-                                 font=("Arial", 18),
+                                 text="Nombre del Empleado",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_n_emp.grid(row=1, column=0, padx=10, sticky="e")
         self.entry_n_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_n_emp.grid(row=1, column=1, columnspan=3, padx=5, sticky="w")
 
         ###DIRECCION###
 
         self.label_d_emp = Label(self.frame_inferior,
-                                 text="Direccion",
-                                 font=("Arial", 18),
+                                 text="Direccion del Empleado",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_d_emp.grid(row=2, column=0, padx=10, sticky="e")
         self.entry_d_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_d_emp.grid(row=2, column=1, columnspan=3, padx=5, sticky="w")
 
         ###EMAIL###
 
         self.label_e_emp = Label(self.frame_inferior,
-                                 text="Email",
-                                 font=("Arial", 18),
+                                 text="Email del Empleado",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_e_emp.grid(row=3, column=0, padx=10, sticky="e")
         self.entry_e_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_e_emp.grid(row=3, column=1, columnspan=3, padx=5, sticky="w")
 
         ###TELEFONO###
 
         self.label_t_emp = Label(self.frame_inferior,
-                                 text="Telefono",
-                                 font=("Arial", 18),
+                                 text="Telefono del Empleado",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_t_emp.grid(row=4, column=0, padx=10, sticky="e")
         self.entry_t_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_t_emp.grid(row=4, column=1, columnspan=3, padx=5, sticky="w")
 
         ###FECHA DE INICIO DE CONTRATO###
 
         self.label_f_emp = Label(self.frame_inferior,
                                  text="Fecha inicio de contrato",
-                                 font=("Arial", 18),
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_f_emp.grid(row=5, column=0, padx=10, sticky="e")
         self.entry_f_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_f_emp.grid(row=5, column=1, columnspan=3, padx=5, sticky="w")
 
         ###SALARIO###
 
         self.label_s_emp = Label(self.frame_inferior,
-                                 text="Salario",
-                                 font=("Arial", 18),
+                                 text="Salario del Empleado",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_s_emp.grid(row=6, column=0, padx=10, sticky="e")
         self.entry_s_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18))
+                                 width=28,
+                                 font=("Helvetica", 18))
         self.entry_s_emp.grid(row=6, column=1, columnspan=3, padx=5, sticky="w")
 
         ###PASSWORD EMPLEADO###
 
         self.label_p_emp = Label(self.frame_inferior,
-                                 text="Contraseña Empleado",
-                                 font=("Arial", 18),
+                                 text="Nueva Contraseña del Empleado",
+                                 font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
         self.label_p_emp.grid(row=7, column=0, padx=10, sticky="e")
         self.entry_p_emp = Entry(self.frame_inferior,
                                  bd=0,
-                                 width=14,
-                                 font=("Arial", 18),
+                                 width=28,
+                                 font=("Helvetica", 18),
                                  show="●")
         self.entry_p_emp.grid(row=7, column=1, columnspan=3, padx=5, sticky="w")
 
@@ -775,26 +804,131 @@ class Login:
         self.boton_ingresar3 = Button(self.frame_inferior,
                                       text="Ingresar",
                                       width=16,
-                                      font=("Arial", 12),
+                                      font=("Helvetica", 12),
                                       command=self.ingresar2)
         self.boton_ingresar3.grid(row=8, column=1, pady=35)
 
     def ingresar2(self):
-        id_empleado = self.entry_i_emp.get()
-        nombre = self.entry_n_emp.get()
-        direccion = self.entry_d_emp.get()
-        email = self.entry_e_emp.get()
-        telefono = self.entry_t_emp.get()
-        f_i_emp = self.entry_f_emp.get()
-        salario = self.entry_s_emp.get()
-        contraseña = self.entry_p_emp.get()
-        # eso se guarda en la base de datos##
+        while True:
+            #Validación de rut
+            id_empleado = self.entry_i_emp.get()
+            # Verificar si el RUT está vacío
+            if not id_empleado:
+                messagebox.showwarning("Campo Vacío", "El campo de RUT no puede estar vacío.")
+                break
 
-        emp = Administrador.Editar_empleado(self,id_empleado,nombre,direccion,email,telefono,f_i_emp,salario,contraseña)
+            # Verificar el formato del RUT (dígitos, guión, y dígito verificador)
+            if not re.match(r'^\d{1,8}-[\dkK]$', id_empleado):
+                messagebox.showwarning("Formato Inválido", "El RUT debe tener el formato 12345678-K.")
+                break
 
-        messagebox.showinfo("", "Empleado editado correctamente")
+            # Separar el cuerpo del RUT y el dígito verificador
+            cuerpo, dv = id_empleado.split('-')
+            dv = dv.upper()  # Convertir el dígito verificador a mayúscula si es necesario
 
-        self.v_e_emp.destroy()
+            # Calcular el dígito verificador esperado
+            reversed_digits = map(int, reversed(cuerpo))
+            factors = cycle(range(2, 8))
+            suma = sum(d * f for d, f in zip(reversed_digits, factors))
+            dv_calculado = str((-suma) % 11)
+            if dv_calculado == '10':
+                dv_calculado = 'K'
+
+            # Comparar el dígito verificador ingresado con el calculado
+            if dv != dv_calculado:
+                messagebox.showwarning("RUT Incorrecto", "El RUT ingresado no es válido.")
+                break
+
+
+            # Validación del nombre
+            nombre = self.entry_n_emp.get()
+            if not nombre:
+                messagebox.showwarning("Campo Vacío", "El campo de nombre no puede estar vacío.")
+                break
+            elif len(nombre.split()) < 2:
+                messagebox.showwarning("Nombre Incompleto", "El campo debe incluir al menos un nombre y un apellido.")
+                break
+
+            # Validación de la dirección
+            direccion = self.entry_d_emp.get()
+            if not direccion:
+                messagebox.showwarning("Campo Vacío", "El campo de dirección no puede estar vacío.")
+                break
+            elif len(direccion) < 5:  # Ajustar la longitud mínima si es necesario
+                messagebox.showwarning("Dirección Invalida", "La dirección debe tener al menos 5 caracteres.")
+            elif not re.search(r'\d', direccion):  # Verifica si hay al menos un número en la dirección
+                messagebox.showwarning("Dirección Inválida", "La dirección debe contener al menos un número.")
+                break
+
+            # Validación de dirección Email
+            email = self.entry_e_emp.get()
+            if not email:
+                messagebox.showwarning("Campo Vacío", "El campo de email no puede estar vacío.")
+                break
+            elif not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):  # Verifica si el email tiene un formato válido
+                messagebox.showwarning("Email Inválido", "Por favor ingrese un email válido.")
+                break
+
+            # Validación de telefono
+            telefono = self.entry_t_emp.get()
+            if not telefono:
+                messagebox.showwarning("Campo Vacío", "El campo de número de celular no puede estar vacío.")
+            elif not re.match(r'^\d{8}$', telefono):
+                messagebox.showwarning("Número Inválido",
+                                       "Por favor ingrese un número de celular chileno válido de 8 dígitos.")
+                break
+
+            # Validacion de la fecha
+            f_i_emp = self.entry_f_emp.get()
+            if not f_i_emp:
+                messagebox.showwarning("Campo Vacío", "El campo de la fecha no puede estar vacío.")
+                break
+            elif not re.match(r'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$', f_i_emp):
+                messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato DD/MM/AAAA.")
+                break
+
+            # Validacion del salario
+            salario = self.entry_s_emp.get()
+            if not salario:
+                messagebox.showwarning("Campo Vacío", "El campo de salario no puede estar vacío.")
+                break
+            try:
+                salario_float = float(salario.replace(".", "").replace(",", ""))  # Convertir a número sin separadores
+                if salario_float < 500000:
+                    messagebox.showwarning("Salario Inválido", "El salario debe ser de al menos 500,000 pesos.")
+                    break
+                elif salario_float > 50000000:
+                    messagebox.showwarning("Salario Inválido", "El salario no puede exceder los 50,000,000 pesos.")
+                    break
+            except ValueError:
+                messagebox.showwarning("Formato Inválido", "Por favor ingrese un salario válido en pesos chilenos.")
+                break
+
+            # Validacion contraseña
+            contraseña = self.entry_p_emp.get()
+            if len(contraseña) < 5:
+                messagebox.showwarning("Contraseña Inválida", "La contraseña debe tener al menos 5 caracteres.")
+                return None
+
+            if not re.search(r'[A-Z]', contraseña):
+                messagebox.showwarning("Contraseña Inválida",
+                                       "La contraseña debe contener al menos una letra mayúscula.")
+                return None
+
+            if not re.search(r'\d', contraseña):
+                messagebox.showwarning("Contraseña Inválida", "La contraseña debe contener al menos un número.")
+                return None
+            else:
+                contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
+                emp = Administrador.Editar_empleado(self, id_empleado, nombre, direccion, email,
+                                               telefono, f_i_emp, salario,
+                                               contrasena_hash)
+                messagebox.showinfo("", "¡Empleado editado correctamente!")
+                self.v_e_emp.destroy()
+                return True
+
+        return False
+
 
     ########VENTANA ELIMINAR EMPLEADO##########################
     def v_d_emp(self):
@@ -1153,8 +1287,6 @@ class Login:
 
 
 Login()
-
-
 
 
 adm = Administrador()
