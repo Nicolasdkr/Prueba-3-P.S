@@ -305,7 +305,7 @@ class Login:
 
     def ventana2(self):
         self.ventana2 = Tk()
-        self.ventana2.geometry("500x500")
+        self.ventana2.geometry("500x600")
         self.ventana2.title("Admin")
 
         fondo1 = "#ff6347"
@@ -376,20 +376,15 @@ class Login:
                                   command=self.v_c_g)
         self.boton_c_ger.grid(row=7, column=1, padx=50, pady=0)
 
-        self.boton_e_ger = Button(self.frame_inferior,
-                                  text="Editar Gerente ",
+
+        self.boton_c_div = Button(self.frame_inferior,
+                                  text="divisa se me olvideo el nombre ",
                                   width=100,
                                   font=("Helvetica", 14),
-                                  command=self.v_e_g)
+                                  command=self.divisa)
+        self.boton_c_div.grid(row=8, column=1, padx=50, pady=10)
 
-        self.boton_e_ger.grid(row=8, column=1, padx=50, pady=10)
 
-        self.boton_d_ger = Button(self.frame_inferior,
-                                  text="Eliminar Gerente ",
-                                  width=100,
-                                  font=("Helvetica", 14),
-                                  command=self.v_d_g)
-        self.boton_d_ger.grid(row=9, column=1, padx=50, pady=10)
 
     ########VENTANA CREAR EMPLEADO##########
 
@@ -745,7 +740,7 @@ class Login:
         ###TELEFONO###
 
         self.label_t_emp = Label(self.frame_inferior,
-                                 text="Telefono del Empleado",
+                                 text="Telefono (+569)",
                                  font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
@@ -810,10 +805,15 @@ class Login:
 
     def ingresar2(self):
         while True:
-            # Validación de rut
             rut = self.entry_i_emp.get()
+            nombre = self.entry_n_emp.get()
+            direccion = self.entry_d_emp.get()
+            email = self.entry_e_emp.get()
+            telefono = self.entry_t_emp.get()
+            f_i_emp = self.entry_f_emp.get()
+            salario = self.entry_s_emp.get()
+            contraseña = self.entry_p_emp.get()
 
-            # Verificar si el RUT está vacío
             if not rut:
                 messagebox.showwarning("Campo Vacío", "El campo de RUT no puede estar vacío.")
                 break
@@ -823,8 +823,27 @@ class Login:
                 messagebox.showwarning("Formato Inválido", "El RUT debe tener el formato 12345678-K.")
                 break
 
-            # Validación del nombre
-            nombre = self.entry_n_emp.get()
+            try:
+                conexion = pymysql.connect(
+                    host='localhost',
+                    user='root',
+                    password='',
+                    db='prueba2'
+                )
+                cursor = conexion.cursor()
+                consulta = "SELECT id_empleado FROM empleado WHERE id_empleado = %s"
+                cursor.execute(consulta, (rut,))
+                resultado = cursor.fetchone()
+
+                if not resultado:
+                    messagebox.showwarning("RUT No Encontrado", f"No existe un empleado con el RUT: {rut}.")
+                    conexion.close()
+                    break
+                conexion.close()
+            except Exception as e:
+                messagebox.showerror("Error", f"Error al verificar el RUT: {e}")
+                break
+
             if not nombre:
                 messagebox.showwarning("Campo Vacío", "El campo de nombre no puede estar vacío.")
                 break
@@ -832,8 +851,6 @@ class Login:
                 messagebox.showwarning("Nombre Incompleto", "El campo debe incluir al menos un nombre y un apellido.")
                 break
 
-            # Validación de la dirección
-            direccion = self.entry_d_emp.get()
             if not direccion:
                 messagebox.showwarning("Campo Vacío", "El campo de dirección no puede estar vacío.")
                 break
@@ -843,17 +860,6 @@ class Login:
                 messagebox.showwarning("Dirección Inválida", "La dirección debe contener al menos un número.")
                 break
 
-            # Validación de dirección Email
-            email = self.entry_e_emp.get()
-            if not email:
-                messagebox.showwarning("Campo Vacío", "El campo de email no puede estar vacío.")
-                break
-            elif not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):  # Verifica si el email tiene un formato válido
-                messagebox.showwarning("Email Inválido", "Por favor ingrese un email válido.")
-                break
-
-            # Validación de telefono
-            telefono = self.entry_t_emp.get()
             if not telefono:
                 messagebox.showwarning("Campo Vacío", "El campo de número de celular no puede estar vacío.")
             elif not re.match(r'^\d{8}$', telefono):
@@ -861,8 +867,6 @@ class Login:
                                        "Por favor ingrese un número de celular chileno válido de 8 dígitos.")
                 break
 
-            # Validacion de la fecha
-            f_i_emp = self.entry_f_emp.get()
             if not f_i_emp:
                 messagebox.showwarning("Campo Vacío", "El campo de la fecha no puede estar vacío.")
                 break
@@ -870,8 +874,6 @@ class Login:
                 messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato DD/MM/AAAA.")
                 break
 
-            # Validacion del salario
-            salario = self.entry_s_emp.get()
             if not salario:
                 messagebox.showwarning("Campo Vacío", "El campo de salario no puede estar vacío.")
                 break
@@ -887,38 +889,34 @@ class Login:
                 messagebox.showwarning("Formato Inválido", "Por favor ingrese un salario válido en pesos chilenos.")
                 break
 
-            # Validacion contraseña
-            contraseña = self.entry_p_emp.get()
-            if len(contraseña) < 5:
-                messagebox.showwarning("Contraseña Inválida", "La contraseña debe tener al menos 5 caracteres.")
-                return None
 
-            if not re.search(r'[A-Z]', contraseña):
+            # Validar la contraseña
+            if len(contraseña) < 5 or not re.search(r'[A-Z]', contraseña) or not re.search(r'\d', contraseña):
                 messagebox.showwarning("Contraseña Inválida",
-                                       "La contraseña debe contener al menos una letra mayúscula.")
-                return None
+                                       "Debe tener al menos 5 caracteres, una mayúscula y un número.")
+                break
 
-            if not re.search(r'\d', contraseña):
-                messagebox.showwarning("Contraseña Inválida", "La contraseña debe contener al menos un número.")
-                return None
-            else:
-                contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
-                emp = Administrador.Editar_empleado(self, rut, nombre, direccion, email,
-                                                    telefono, f_i_emp, salario,
-                                                    contrasena_hash)
-                messagebox.showinfo("", "¡Empleado editado correctamente!")
-                self.v_e_emp.destroy()
-                return True
+            # Encriptar la contraseña
+            contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
+
+            # Llamar al método de actualización
+            emp = Administrador.Editar_empleado(self, rut, nombre, direccion, email,
+                                               telefono, f_i_emp, salario,
+                                               contraseña)
+            # Confirmar y cerrar
+            messagebox.showinfo("", "¡Empleado editado correctamente!")
+            self.v_e_emp.destroy()
+            return True
 
         return False
 
     ########VENTANA ELIMINAR EMPLEADO##########################
     def v_d_emp(self):
         self.v_d_emp = Tk()
-        self.v_d_emp.geometry("400x700")
-        self.v_d_emp.title("Editar Empleado")
+        self.v_d_emp.geometry("500x400")
+        self.v_d_emp.title("Eliminar Empleado")
 
-        fondo4 = "#9fbbf3"
+        fondo4 = "#ff6347"
 
         self.frame_superior = Frame(self.v_d_emp)
         self.frame_superior.configure(bg=fondo4)
@@ -959,11 +957,12 @@ class Login:
         self.boton_eliminar.grid(row=1, column=1, pady=35)
 
     def eliminar(self):
-        id_empleado = self.entry_i_emp.get()
+        id_empleado = self.entry_i_emp.get()  # Suponiendo que el RUT está en esta entrada
 
-        emp = Administrador.Eliminar_empleado(self, id_empleado)
-        # eliminar#
-        messagebox.showinfo("", "Empleado eliminado correctamente")
+        emp = Administrador.Eliminar_empleado(self, id_empleado)  # Llamar a la función Eliminar_empleado
+
+        # Mostrar mensaje de éxito
+        messagebox.showinfo("Eliminación", "Empleado eliminado correctamente.")
         self.v_d_emp.destroy()
 
     ########VENTANA CREAR DEPARTAMENTO########
@@ -1257,16 +1256,49 @@ class Login:
         self.boton_crear_g.grid(row=2, column=1, pady=35)
 
 
-    def crear_g(self):
-        gerente = self.entry_c_ig.get()
-        pssword_g = self.entry_p_g.get()
+    def divisa(self):
+        self.divisa = Tk()
+        self.divisa.geometry("600x400")
+        self.divisa.title("Divisa")
 
-        emp = Administrador.Crear_Gerente(self, gerente, pssword_g)
+        fondo5 = "#9fbbf3"
 
-        messagebox.showinfo("", "Gerente Creado correctamente")
+        self.frame_superior = Frame(self.divisa)
+        self.frame_superior.configure(bg=fondo5)
+        self.frame_superior.pack(fill="both", expand=True)
 
-        self.v_c_g.destroy()
+        self.frame_inferior = Frame(self.divisa)
+        self.frame_inferior.configure(bg=fondo5)
+        self.frame_inferior.pack(fill="both", expand=True)
 
+        self.frame_inferior.columnconfigure(0, weight=1)
+        self.frame_inferior.columnconfigure(1, weight=1)
+
+        self.titulo_c_div = Label(self.frame_superior,
+                                  text="divisa",
+                                  font=("Tahoma", 30, "bold"),
+                                  bg=fondo5)
+        self.titulo_c_div.pack(side="top", pady=20)
+
+        ###AQUI ESTAN LOS BOTONES TODOS ALUCINES
+
+        self.boton_ingresar3 = Button(self.frame_inferior,
+                                      text="divisa",
+                                      width=16,
+                                      font=("Helvetica", 12),
+                                      command=self.ingresar2) #AQUI AGREGAS EL NOMBRE DE LA FUNCION DE LA DIVISA PARA QUE ENTRE
+        self.boton_ingresar3.grid(row=1, column=1, pady=35)
+
+
+        self.boton_ingresar3 = Button(self.frame_inferior,
+                                      text="fecha",
+                                      width=16,
+                                      font=("Helvetica", 12),
+                                      command=self.ingresar2)  #AQUI AGREGAS EL NOMBRE DE LA FUNCION DE LA DIVISA
+        self.boton_ingresar3.grid(row=0, column=1, pady=35)
+
+
+#--------------------- AQUI TIENES QUE AGREGAR LAS FUNCIONES O LLAMARLAS, NOSE ESO LO VES TU SKEREEEE
 
 Login()
 

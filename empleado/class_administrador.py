@@ -51,52 +51,52 @@ class Administrador(Empleado):
 
 
     def Editar_empleado(self, id_empleado, nuevo_nombre, nueva_direccion, nuevo_email, nuevo_telefono,
-                            nueva_fecha_inicio_contrato, nuevo_salario, nuevo_password):
-        # Establecer conexión a la base de datos
+                        nueva_fecha_inicio_contrato, nuevo_salario, nuevo_password):
         try:
+            # Establecer conexión a la base de datos
             self.conexion = pymysql.connect(
                 host='localhost',
                 user='root',
                 password='',
                 db='prueba2'
             )
-            self.prueba2 = self.conexion.cursor()
+            self.prueba = self.conexion.cursor()
             print("Conexión a la base de datos correcta.")
         except Exception as e:
             print(f"Error de conexión a la base de datos: {e}")
             return
 
         # Verificar si el empleado existe
-        consulta = "SELECT * FROM empleado WHERE id_empleado = '{}'".format(self.id_empleado)
-        self.prueba2.execute(consulta)
-        resultado = self.prueba2.fetchone()
+        consulta = "SELECT * FROM empleado WHERE id_empleado = %s"
+        self.prueba.execute(consulta, (id_empleado,))
+        resultado = self.prueba.fetchone()
 
         if not resultado:
-            print(f"No existe un empleado con id_empleado={self.id_empleado}")
+            print(f"No existe un empleado con id_empleado='{id_empleado}'")
             self.conexion.close()
             return
 
-        # Encriptar la nueva contraseña
+        # Encriptar la nueva contraseña si se proporciona
         if nuevo_password:
             password_encode = nuevo_password.encode()
             salt = bcrypt.gensalt(12)
             password_hash = bcrypt.hashpw(password_encode, salt).decode()
         else:
-            # Si no se proporciona nueva contraseña, mantener la contraseña actual
+            # Mantener la contraseña actual si no se proporciona una nueva
             password_hash = resultado[7]  # Asumiendo que la contraseña está en la posición 7
 
-        # Preparar la consulta para actualizar los datos del empleado utilizando .format()
+        # Preparar y ejecutar la consulta de actualización con parámetros
         actualizar = """
-                       UPDATE empleado 
-                       SET nombre = '{}', direccion = '{}', email = '{}', telefono = '{}', 
-                           fecha_inicio_contrato = '{}', salario = {}, password_empleado = '{}'
-                       WHERE id_empleado = {}
-                   """.format(nuevo_nombre, nueva_direccion, nuevo_email, nuevo_telefono,
-                              nueva_fecha_inicio_contrato, nuevo_salario, password_hash, self.id_empleado)
-
-        # Ejecutar la consulta para actualizar los datos
+            UPDATE empleado
+            SET nombre = %s, direccion = %s, email = %s, telefono = %s, 
+                fecha_inicio_contrato = %s, salario = %s, password_empleado = %s
+            WHERE id_empleado = %s
+        """
         try:
-            self.prueba2.execute(actualizar)
+            self.prueba.execute(actualizar, (
+                nuevo_nombre, nueva_direccion, nuevo_email, nuevo_telefono,
+                nueva_fecha_inicio_contrato, nuevo_salario, password_hash, id_empleado
+            ))
             self.conexion.commit()
             print("Actualización completada con éxito.")
         except Exception as e:
@@ -104,45 +104,50 @@ class Administrador(Empleado):
         finally:
             self.conexion.close()
 
-
     def Eliminar_empleado(self, id_empleado):
         try:
+            # Conexión a la base de datos
             self.conexion = pymysql.connect(
                 host='localhost',
                 user='root',
                 password='',
-                db='prueba'
+                db='prueba2'
             )
             self.prueba = self.conexion.cursor()
+            print("Conexión a la base de datos correcta.")
         except Exception as e:
             print(f"Error de conexión a la base de datos: {e}")
             return
 
-
-        consulta = "SELECT * FROM empleado WHERE id_empleado ={}".format(id_empleado)
-        self.prueba.execute(consulta)
+        # Verificar si el empleado existe
+        consulta = "SELECT * FROM empleado WHERE id_empleado = %s"
+        self.prueba.execute(consulta, (id_empleado,))
         resultado = self.prueba.fetchone()
 
+        if not resultado:
+            print(f"No existe un empleado con id_empleado={id_empleado}")
+            self.conexion.close()
+            return
 
+        # Cambiar el estado del empleado a 0 (inactivo/eliminado)
         try:
+            actualizar_estado = """UPDATE empleado 
+                                   SET estado = 0
+                                   WHERE id_empleado = %s"""
+            self.prueba.execute(actualizar_estado, (id_empleado,))
 
-            if resultado:
-
-                eliminar = """DELETE FROM empleado WHERE id_empleado= {}""".format(id_empleado)
-
-                self.prueba.execute(eliminar)
+            # Verificar cuántas filas se actualizaron
+            if self.prueba.rowcount > 0:
+                print(f"Empleado con id_empleado={id_empleado} eliminado correctamente.")
                 self.conexion.commit()
-                print("Empleado eliminado")
             else:
-                print(f"No existe un empleado con id_empleado={id_empleado}")
-
+                print(f"No se pudo eliminar el empleado con id_empleado={id_empleado}.")
         except Exception as e:
-            print(f"Error al eliminar: {e}")
-            raise
+            print(f"Error al cambiar el estado del empleado: {e}")
         finally:
             self.conexion.close()
 
-#--------------------------------- PARTE DEPARTAMENTO --------------------------------------------------
+    #--------------------------------- PARTE DEPARTAMENTO --------------------------------------------------
 
     def Crear_departamento(self, password_departamento, id_gerente, id_administrador):
         try:
