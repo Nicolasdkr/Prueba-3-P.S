@@ -810,35 +810,18 @@ class Login:
 
     def ingresar2(self):
         while True:
-            #Validación de rut
-            id_empleado = self.entry_i_emp.get()
+            # Validación de rut
+            rut = self.entry_i_emp.get()
+
             # Verificar si el RUT está vacío
-            if not id_empleado:
+            if not rut:
                 messagebox.showwarning("Campo Vacío", "El campo de RUT no puede estar vacío.")
                 break
 
             # Verificar el formato del RUT (dígitos, guión, y dígito verificador)
-            if not re.match(r'^\d{1,8}-[\dkK]$', id_empleado):
+            if not re.match(r'^\d{1,8}-[\dkK]$', rut):
                 messagebox.showwarning("Formato Inválido", "El RUT debe tener el formato 12345678-K.")
                 break
-
-            # Separar el cuerpo del RUT y el dígito verificador
-            cuerpo, dv = id_empleado.split('-')
-            dv = dv.upper()  # Convertir el dígito verificador a mayúscula si es necesario
-
-            # Calcular el dígito verificador esperado
-            reversed_digits = map(int, reversed(cuerpo))
-            factors = cycle(range(2, 8))
-            suma = sum(d * f for d, f in zip(reversed_digits, factors))
-            dv_calculado = str((-suma) % 11)
-            if dv_calculado == '10':
-                dv_calculado = 'K'
-
-            # Comparar el dígito verificador ingresado con el calculado
-            if dv != dv_calculado:
-                messagebox.showwarning("RUT Incorrecto", "El RUT ingresado no es válido.")
-                break
-
 
             # Validación del nombre
             nombre = self.entry_n_emp.get()
@@ -920,15 +903,14 @@ class Login:
                 return None
             else:
                 contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
-                emp = Administrador.Editar_empleado(self, id_empleado, nombre, direccion, email,
-                                               telefono, f_i_emp, salario,
-                                               contrasena_hash)
+                emp = Administrador.Editar_empleado(self, rut, nombre, direccion, email,
+                                                    telefono, f_i_emp, salario,
+                                                    contrasena_hash)
                 messagebox.showinfo("", "¡Empleado editado correctamente!")
                 self.v_e_emp.destroy()
                 return True
 
         return False
-
 
     ########VENTANA ELIMINAR EMPLEADO##########################
     def v_d_emp(self):

@@ -60,24 +60,16 @@ class Administrador(Empleado):
                 password='',
                 db='prueba2'
             )
-            self.prueba = self.conexion.cursor()
+            self.prueba2 = self.conexion.cursor()
             print("Conexión a la base de datos correcta.")
         except Exception as e:
             print(f"Error de conexión a la base de datos: {e}")
             return
 
-        # Verificar que el ID del empleado es válido
-        try:
-            self.id_empleado = int(id_empleado)
-        except ValueError:
-            print("ID inválido, debe ser un número entero.")
-            self.conexion.close()
-            return
-
         # Verificar si el empleado existe
-        consulta = "SELECT * FROM empleado WHERE id_empleado = {}".format(self.id_empleado)
-        self.prueba.execute(consulta)
-        resultado = self.prueba.fetchone()
+        consulta = "SELECT * FROM empleado WHERE id_empleado = '{}'".format(self.id_empleado)
+        self.prueba2.execute(consulta)
+        resultado = self.prueba2.fetchone()
 
         if not resultado:
             print(f"No existe un empleado con id_empleado={self.id_empleado}")
@@ -104,7 +96,7 @@ class Administrador(Empleado):
 
         # Ejecutar la consulta para actualizar los datos
         try:
-            self.prueba.execute(actualizar)
+            self.prueba2.execute(actualizar)
             self.conexion.commit()
             print("Actualización completada con éxito.")
         except Exception as e:
