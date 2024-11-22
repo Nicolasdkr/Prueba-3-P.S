@@ -10,7 +10,7 @@ import pymysql
 import pymysql
 import mysql.connector
 from itertools import cycle
-from Api.Api import divisaFunction
+from Api.Api import Dinero
 
 
 # Configuración de la conexión inicial (sin base de datos)
@@ -121,6 +121,20 @@ try:
                 PRIMARY KEY (id_registro_tiempo),
                 KEY ideemp_idx (idemp),
                 KEY idproyecto_idx (idproyecto)
+            )
+        """,
+        "registro_divisa": """
+            CREATE TABLE divisa (
+                id_registro_divisa INT NOT NULL AUTO_INCREMENT,
+                fecha_usuario_consulta INT(11) NOT NULL,
+                id_empleado_registro INT(12) NOT NULL,
+                sitio_info VARCHAR(30) NOT NULL,
+                indicador VARCHAR(6) NOT NULL,
+                fecha_de_registro INT(11) NOT NULL,
+                valor_indicador INT(8) NOT NULL,
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
+                PRIMARY KEY (id_registro_divisa),
+                KEY id_empleado_registro_idx (id_empleado_registro)
             )
         """
     }
@@ -388,7 +402,7 @@ class Login:
                                   text="Consultar indicador economico",
                                   width=100,
                                   font=("Helvetica", 14),
-                                  command=self.v_re_emp)
+                                  command=self.divisa)
         self.boton_c_div.grid(row=8, column=1, padx=50, pady=10)
 
         self.boton_r_emp = Button(self.frame_inferior,
@@ -997,6 +1011,7 @@ class Login:
     ########VENTANA RECUPERAR EMPLEADO########
 
     def v_re_emp(self):
+
         self.v_re_emp = Tk()
         self.v_re_emp.geometry("500x400")
         self.v_re_emp.title("Recuperar Empleado")
@@ -1014,35 +1029,36 @@ class Login:
         self.frame_inferior.columnconfigure(0, weight=1)
         self.frame_inferior.columnconfigure(1, weight=1)
 
-        self.titulo_e_emp = Label(self.frame_superior,
+        self.titulo_re_emp = Label(self.frame_superior,
                                   text="Recuperar Empleado",
                                   font=("Calisto MT", 36, "bold"),
                                   bg=fondo4)
-        self.titulo_e_emp.pack(side="top", pady=20)
+        self.titulo_re_emp.pack(side="top", pady=20)
 
         ###IDEMPLEADO###
 
-        self.label_i_emp = Label(self.frame_inferior,
+        self.label_id_emp = Label(self.frame_inferior,
                                  text="ID del empleado",
                                  font=("Arial", 18),
                                  bg=fondo4,
                                  fg="black")
-        self.label_i_emp.grid(row=0, column=0, padx=10, sticky="e")
-        self.entry_i_emp = Entry(self.frame_inferior,
+        self.label_id_emp.grid(row=0, column=0, padx=10, sticky="e")
+        self.entry_id_emp = Entry(self.frame_inferior,
                                  bd=0,
                                  width=14,
                                  font=("Arial", 18))
-        self.entry_i_emp.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
+        self.entry_id_emp.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
 
-        self.boton_eliminar = Button(self.frame_inferior,
-                                     text="Eliminar",
+        self.boton_recuperar = Button(self.frame_inferior,
+                                     text="Recuperar",
                                      width=16,
                                      font=("Arial", 12),
                                      command=self.recuperar)
-        self.boton_eliminar.grid(row=1, column=1, pady=35)
+        self.boton_recuperar.grid(row=1, column=1, pady=35)
 
     def recuperar(self):
-        id_empleado = self.entry_i_emp.get()
+
+        id_empleado = self.entry_id_emp.get()
 
 
         emp = Administrador.Recuperar_empleado(self, id_empleado)
@@ -1345,6 +1361,7 @@ class Login:
 
 
     def divisa(self):
+
         self.divisa = Tk()
         self.divisa.geometry("700x700")
         self.divisa.title("Consultar indicador economico")
@@ -1390,6 +1407,33 @@ class Login:
                                width=14,
                                font=("Arial", 18),
                                )
+        self.label_fecha_actual = Label(self.frame_inferior,
+                                 text="fecha actual",
+                                 font=("Arial", 18),
+                                 bg=fondo4,
+                                 fg="black")
+        self.label_fecha_actual.grid(row=2, column=0, padx=10, sticky="e")
+        self.entry_fecha_actual = Entry(self.frame_inferior,
+                                 bd=0,
+                                 width=14,
+                                 font=("Arial", 18),
+                                 )
+        self.entry_fecha_actual.grid(row=2, column=1, columnspan=3, padx=5, sticky="w")
+
+        self.label_rut_divisa = Label(self.frame_inferior,
+                                 text="rut",
+                                 font=("Arial", 18),
+                                 bg=fondo4,
+                                 fg="black")
+        self.label_rut_divisa.grid(row=3, column=0, padx=10, sticky="e")
+        self.entry_rut_divisa = Entry(self.frame_inferior,
+                                 bd=0,
+                                 width=14,
+                                 font=("Arial", 18),
+                                 )
+        self.entry_rut_divisa.grid(row=3, column=1, columnspan=3, padx=5, sticky="w")
+
+
         self.entry_fecha.grid(row=1, column=1, columnspan=3, padx=5, sticky="w")
 
         self.boton_crear_g = Button(self.frame_inferior,
@@ -1397,16 +1441,20 @@ class Login:
                                     width=22,
                                     font=("Arial", 12),
                                     command=self.validarDivisa)
-        self.boton_crear_g.grid(row=2, column=1, pady=35)
+        self.boton_crear_g.grid(row=4, column=1, pady=35)
 
 
 
 #--------------------- AQUI TIENES QUE AGREGAR LAS FUNCIONES O LLAMARLAS, NOSE ESO LO VES TU SKEREEEE
 
     def validarDivisa(self):
+
+
         while True:
             divisa = self.entry_divisa.get().lower()
             fecha = self.entry_fecha.get()
+            rut = self.entry_rut_divisa.get()
+            fecha_actual = self.entry_fecha_actual.get()
 
             divisas_validas = ["euro", "dolar", "uf", "utm", "ivp", "ipc"]
 
@@ -1420,7 +1468,7 @@ class Login:
 
 
             #validaciones fecha
-            if divisa == "ipc" and not re.match(r'^(1)-(0[1-9]|1[0-2])-\d{4}$', fecha) or divisaFunction(divisa,fecha) == None:
+            if divisa == "ipc" and not re.match(r'^(1)-(0[1-9]|1[0-2])-\d{4}$', fecha) or Dinero.divisaFunction(self, divisa,fecha) == None:
                 messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato 1-MM-AAAA, puede ser cualquier mes exceptuando el presente, y meses en el futuro.")
                 break
 
@@ -1432,10 +1480,31 @@ class Login:
                 messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato DD-MM-AAAA.")
                 break
 
+            #validar rut
+            if not rut:
+                messagebox.showwarning("Campo Vacío", "El campo de RUT no puede estar vacío.")
+                break
+
+            # Verificar el formato del RUT (dígitos, guión, y dígito verificador)
+            if not re.match(r'^\d{1,8}-[\dkK]$', rut):
+                messagebox.showwarning("Formato Inválido", "El RUT debe tener el formato 12345678-K.")
+                break
+
+            #validar fecha actual
+            if not fecha_actual:
+                messagebox.showwarning("Campo Vacío", "El campo de la fecha no puede estar vacío.")
+                break
+            elif not re.match(r'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$', fecha_actual):
+                messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato DD/MM/AAAA.")
+                break
+
+
             # Confirmar y cerrar
+            valor = Dinero.divisaFunction(self, divisa,fecha)
+            Dinero.subirABD(self, divisa, fecha, valor, rut, fecha_actual)
             messagebox.showinfo("", f"""DIVISA: {divisa.upper()}
 FECHA: {fecha}
-VALOR: {divisaFunction(divisa,fecha)}
+VALOR: {Dinero.divisaFunction(self, divisa,fecha)}
 REGISTRO INGRESADO A LA BASE DE DATOS""")
             self.divisa.destroy()
             return True
