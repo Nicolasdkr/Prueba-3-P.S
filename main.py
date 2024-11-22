@@ -10,6 +10,7 @@ import pymysql
 import pymysql
 import mysql.connector
 from itertools import cycle
+from Api.Api import divisaFunction
 
 
 # Configuración de la conexión inicial (sin base de datos)
@@ -378,7 +379,7 @@ class Login:
 
 
         self.boton_c_div = Button(self.frame_inferior,
-                                  text="divisa se me olvideo el nombre ",
+                                  text="Consultar indicador economico",
                                   width=100,
                                   font=("Helvetica", 14),
                                   command=self.divisa)
@@ -1109,7 +1110,7 @@ class Login:
         self.entry_a_d.grid(row=3, column=1, columnspan=3, padx=5, sticky="w")
 
         self.label_p_d = Label(self.frame_inferior,
-                               text="Contraseña Depertamento",
+                               text="Contraseña Departamento",
                                font=("Arial", 18),
                                bg=fondo4,
                                fg="black")
@@ -1258,52 +1259,108 @@ class Login:
 
     def divisa(self):
         self.divisa = Tk()
-        self.divisa.geometry("600x400")
-        self.divisa.title("Divisa")
+        self.divisa.geometry("700x700")
+        self.divisa.title("Consultar indicador economico")
 
-        fondo5 = "#9fbbf3"
+        fondo4 = "#ff6347"
 
         self.frame_superior = Frame(self.divisa)
-        self.frame_superior.configure(bg=fondo5)
+        self.frame_superior.configure(bg=fondo4)
         self.frame_superior.pack(fill="both", expand=True)
 
         self.frame_inferior = Frame(self.divisa)
-        self.frame_inferior.configure(bg=fondo5)
+        self.frame_inferior.configure(bg=fondo4)
         self.frame_inferior.pack(fill="both", expand=True)
 
         self.frame_inferior.columnconfigure(0, weight=1)
         self.frame_inferior.columnconfigure(1, weight=1)
 
-        self.titulo_c_div = Label(self.frame_superior,
-                                  text="divisa",
-                                  font=("Tahoma", 30, "bold"),
-                                  bg=fondo5)
-        self.titulo_c_div.pack(side="top", pady=20)
+        self.titulo_divisa = Label(self.frame_superior,
+                                text="Consultar indicador economico",
+                                font=("Calisto MT", 36, "bold"),
+                                bg=fondo4)
+        self.titulo_divisa.pack(side="top", pady=20)
 
-        ###AQUI ESTAN LOS BOTONES TODOS ALUCINES
+        self.label_divisa = Label(self.frame_inferior,
+                                text="divisa",
+                                font=("Arial", 18),
+                                bg=fondo4,
+                                fg="black")
+        self.label_divisa.grid(row=0, column=0, padx=10, sticky="e")
+        self.entry_divisa = Entry(self.frame_inferior,
+                                bd=0,
+                                width=14,
+                                font=("Arial", 18))
+        self.entry_divisa.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
+        self.label_fecha = Label(self.frame_inferior,
+                               text="fecha",
+                               font=("Arial", 18),
+                               bg=fondo4,
+                               fg="black")
+        self.label_fecha.grid(row=1, column=0, padx=10, sticky="e")
+        self.entry_fecha = Entry(self.frame_inferior,
+                               bd=0,
+                               width=14,
+                               font=("Arial", 18),
+                               )
+        self.entry_fecha.grid(row=1, column=1, columnspan=3, padx=5, sticky="w")
 
-        self.boton_ingresar3 = Button(self.frame_inferior,
-                                      text="divisa",
-                                      width=16,
-                                      font=("Helvetica", 12),
-                                      command=self.ingresar2) #AQUI AGREGAS EL NOMBRE DE LA FUNCION DE LA DIVISA PARA QUE ENTRE
-        self.boton_ingresar3.grid(row=1, column=1, pady=35)
+        self.boton_crear_g = Button(self.frame_inferior,
+                                    text="consultar divisa",
+                                    width=22,
+                                    font=("Arial", 12),
+                                    command=self.validarDivisa)
+        self.boton_crear_g.grid(row=2, column=1, pady=35)
 
-
-        self.boton_ingresar3 = Button(self.frame_inferior,
-                                      text="fecha",
-                                      width=16,
-                                      font=("Helvetica", 12),
-                                      command=self.ingresar2)  #AQUI AGREGAS EL NOMBRE DE LA FUNCION DE LA DIVISA
-        self.boton_ingresar3.grid(row=0, column=1, pady=35)
 
 
 #--------------------- AQUI TIENES QUE AGREGAR LAS FUNCIONES O LLAMARLAS, NOSE ESO LO VES TU SKEREEEE
 
+    def validarDivisa(self):
+        while True:
+            divisa = self.entry_divisa.get().lower()
+            fecha = self.entry_fecha.get()
+
+            divisas_validas = ["euro", "dolar", "uf", "utm", "ivp", "ipc"]
+
+            #validaciones divisa
+            if not divisa:
+                messagebox.showwarning("Campo Vacío", "El campo de la divisa no puede estar vacío.")
+                break
+            if divisa not in divisas_validas:
+                messagebox.showwarning("divisa invalida", "La divisa ingresada no es compatible (euro,dolar,uf,utm,ivp,ipc).")
+                break
+
+
+            #validaciones fecha
+            if divisa == "ipc" and not re.match(r'^(1)-(0[1-9]|1[0-2])-\d{4}$', fecha) or divisaFunction(divisa,fecha) == None:
+                messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato 1-MM-AAAA, puede ser cualquier mes exceptuando el presente, y meses en el futuro.")
+                break
+
+            if not fecha:
+                messagebox.showwarning("Campo Vacío", "El campo de la fecha no puede estar vacío.")
+                break
+
+            if not re.match(r'^([1-9]|0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$', fecha):
+                messagebox.showwarning("Fecha Inválida", "Por favor ingrese una fecha válida en formato DD-MM-AAAA.")
+                break
+
+            # Confirmar y cerrar
+            messagebox.showinfo("", f"""DIVISA: {divisa.upper()}
+FECHA: {fecha}
+VALOR: {divisaFunction(divisa,fecha)}
+REGISTRO INGRESADO A LA BASE DE DATOS""")
+            self.divisa.destroy()
+            return True
+
+
+
+
+
 Login()
 
 
-adm = Administrador()
+#adm = Administrador()
 #adm.Crear_empleado()
 #adm.Editar_empleado()
 #adm.Eliminar_empleado()
