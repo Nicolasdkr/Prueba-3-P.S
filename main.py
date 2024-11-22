@@ -52,6 +52,7 @@ try:
                 id_gerente INT(11) NOT NULL,
                 id_emp VARCHAR(12) NOT NULL,  -- Se usa VARCHAR para RUT
                 id_admin INT(11) NOT NULL,
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
                 PRIMARY KEY (id_departamento)
             )
         """,
@@ -65,6 +66,7 @@ try:
                 fecha_inicio_contrato VARCHAR(100) NOT NULL,
                 salario FLOAT NOT NULL,
                 password_empleado VARCHAR(50) NOT NULL,
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
                 PRIMARY KEY (id_empleado)
             )
         """,
@@ -73,6 +75,7 @@ try:
                 id_gerente INT(11) NOT NULL,
                 password_gerente VARCHAR(10) NOT NULL,
                 id_empleado VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
                 PRIMARY KEY (id_gerente),
                 KEY id_empleado_idx (id_empleado)
             )
@@ -84,6 +87,7 @@ try:
                 iddepto INT(11) NOT NULL,
                 idregistros INT(11) NOT NULL,
                 id_proyecto INT(11) NOT NULL,
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
                 PRIMARY KEY (idinforme),
                 KEY idempl_idx (ideempleado),
                 KEY idproyect_idx (id_proyecto),
@@ -99,6 +103,7 @@ try:
                 fecha_inicio INT(11) NOT NULL,
                 password_proyecto VARCHAR(10) NOT NULL,
                 idemp VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
                 PRIMARY KEY (id_proyecto),
                 KEY idempl_idx (idemp)
             )
@@ -111,6 +116,7 @@ try:
                 desc_tarea VARCHAR(100) NOT NULL,
                 idproyecto INT(11) NOT NULL,
                 idemp VARCHAR(12) NOT NULL,  -- Vinculado a empleado por RUT
+                estado TINYINT(1) NOT NULL DEFAULT 1,  -- Estado activo por defecto
                 PRIMARY KEY (id_registro_tiempo),
                 KEY ideemp_idx (idemp),
                 KEY idproyecto_idx (idproyecto)
@@ -220,7 +226,7 @@ class Login:
 
         self.ventana = Tk()
         self.ventana.geometry("700x700")
-        self.ventana.title("aaaa")
+        self.ventana.title("Empleado")
 
         fondo = "#ff6347"
 
@@ -255,7 +261,7 @@ class Login:
         self.titulo.pack(side="top", pady=40)
 
         self.label_usuario = Label(self.frame_inferior,
-                                   text="id?",
+                                   text="Usuario",
                                    font=("Helvetica", 18),
                                    bg=fondo,
                                    fg="black")
@@ -277,7 +283,7 @@ class Login:
                                       width=14,
                                       font=("Helvetica", 18),
                                       show="ඞ")
-        #●
+
         self.entry_contraseña.grid(row=1, column=1, columnspan=3, padx=5, sticky="w")
 
         self.boton_ingresar = Button(self.frame_inferior,
@@ -381,16 +387,21 @@ class Login:
                                   text="divisa se me olvideo el nombre ",
                                   width=100,
                                   font=("Helvetica", 14),
-                                  command=self.divisa)
+                                  command=self.v_re_emp)
         self.boton_c_div.grid(row=8, column=1, padx=50, pady=10)
 
-
+        self.boton_r_emp = Button(self.frame_inferior,
+                                  text="Recuperar Empleado",
+                                  width=100,
+                                  font=("Helvetica", 14),
+                                  command=self.v_re_emp)
+        self.boton_r_emp.grid(row=9, column=1, padx=50, pady=10)
 
     ########VENTANA CREAR EMPLEADO##########
 
     def v_c_emp(self):
         self.v_c_emp = Tk()
-        self.v_c_emp.geometry("700x500")
+        self.v_c_emp.geometry("800x500")
         self.v_c_emp.title("Crear Empleado")
 
         fondo3 = "#ff6347"
@@ -414,7 +425,7 @@ class Login:
 
         ##RUT
         self.label_r_emp = Label(self.frame_inferior,
-                                 text="RUT",
+                                 text="RUT del Empleado (xxxxxxxx-x)",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -428,7 +439,7 @@ class Login:
         ###NOMBRE###
 
         self.label_n_emp = Label(self.frame_inferior,
-                                 text="Nombre completo",
+                                 text="Nombre Completo del Empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -442,7 +453,7 @@ class Login:
         ###DIRECCION###
 
         self.label_d_emp = Label(self.frame_inferior,
-                                 text="Dirección",
+                                 text="Dirección del Empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -456,7 +467,7 @@ class Login:
         ###EMAIL###
 
         self.label_e_emp = Label(self.frame_inferior,
-                                 text="Email",
+                                 text="Email del Empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -470,7 +481,7 @@ class Login:
         ###TELEFONO###
 
         self.label_t_emp = Label(self.frame_inferior,
-                                 text="Telefono (+569)",
+                                 text="Telefono del Empleado (+569)",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -498,7 +509,7 @@ class Login:
         ###SALARIO###
 
         self.label_s_emp = Label(self.frame_inferior,
-                                 text="Salario",
+                                 text="Salario del Empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -512,7 +523,7 @@ class Login:
         ###PASSWORD EMPLEADO###
 
         self.label_p_emp = Label(self.frame_inferior,
-                                 text="Contraseña empleado",
+                                 text="Contraseña del Empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo3,
                                  fg="black")
@@ -698,7 +709,7 @@ class Login:
         ###NOMBRE###
 
         self.label_n_emp = Label(self.frame_inferior,
-                                 text="Nombre del Empleado",
+                                 text="Nombre Completo del Empleado",
                                  font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
@@ -740,7 +751,7 @@ class Login:
         ###TELEFONO###
 
         self.label_t_emp = Label(self.frame_inferior,
-                                 text="Telefono (+569)",
+                                 text="Telefono del Empleado (+569)",
                                  font=("Helvetica", 18),
                                  bg=fondo4,
                                  fg="black")
@@ -824,6 +835,7 @@ class Login:
                 break
 
             try:
+                # Conectar a la base de datos
                 conexion = pymysql.connect(
                     host='localhost',
                     user='root',
@@ -831,15 +843,29 @@ class Login:
                     db='prueba2'
                 )
                 cursor = conexion.cursor()
-                consulta = "SELECT id_empleado FROM empleado WHERE id_empleado = %s"
-                cursor.execute(consulta, (rut,))
+
+                # Validar si el empleado existe y verificar su estado
+                consulta_estado = "SELECT estado FROM empleado WHERE id_empleado = %s"
+                cursor.execute(consulta_estado, (rut,))
                 resultado = cursor.fetchone()
 
                 if not resultado:
                     messagebox.showwarning("RUT No Encontrado", f"No existe un empleado con el RUT: {rut}.")
                     conexion.close()
                     break
+
+                estado_empleado = resultado[0]  # Recuperar el estado del empleado
+
+                if estado_empleado == 0:
+                    messagebox.showwarning(
+                        "Empleado Inactivo",
+                        f"No se puede modificar el empleado con RUT {rut} porque está en estado 'borrado'."
+                    )
+                    conexion.close()
+                    break
+
                 conexion.close()
+
             except Exception as e:
                 messagebox.showerror("Error", f"Error al verificar el RUT: {e}")
                 break
@@ -855,13 +881,15 @@ class Login:
                 messagebox.showwarning("Campo Vacío", "El campo de dirección no puede estar vacío.")
                 break
             elif len(direccion) < 5:  # Ajustar la longitud mínima si es necesario
-                messagebox.showwarning("Dirección Invalida", "La dirección debe tener al menos 5 caracteres.")
+                messagebox.showwarning("Dirección Inválida", "La dirección debe tener al menos 5 caracteres.")
+                break
             elif not re.search(r'\d', direccion):  # Verifica si hay al menos un número en la dirección
                 messagebox.showwarning("Dirección Inválida", "La dirección debe contener al menos un número.")
                 break
 
             if not telefono:
                 messagebox.showwarning("Campo Vacío", "El campo de número de celular no puede estar vacío.")
+                break
             elif not re.match(r'^\d{8}$', telefono):
                 messagebox.showwarning("Número Inválido",
                                        "Por favor ingrese un número de celular chileno válido de 8 dígitos.")
@@ -889,7 +917,6 @@ class Login:
                 messagebox.showwarning("Formato Inválido", "Por favor ingrese un salario válido en pesos chilenos.")
                 break
 
-
             # Validar la contraseña
             if len(contraseña) < 5 or not re.search(r'[A-Z]', contraseña) or not re.search(r'\d', contraseña):
                 messagebox.showwarning("Contraseña Inválida",
@@ -899,10 +926,11 @@ class Login:
             # Encriptar la contraseña
             contrasena_hash = hashlib.sha256(contraseña.encode()).hexdigest()
 
-            # Llamar al método de actualización
-            emp = Administrador.Editar_empleado(self, rut, nombre, direccion, email,
-                                               telefono, f_i_emp, salario,
-                                               contraseña)
+            # Llamar función para editar
+            emp = Administrador.Editar_empleado(
+                self, rut, nombre, direccion, email, telefono, f_i_emp, salario, contraseña
+            )
+
             # Confirmar y cerrar
             messagebox.showinfo("", "¡Empleado editado correctamente!")
             self.v_e_emp.destroy()
@@ -957,7 +985,7 @@ class Login:
         self.boton_eliminar.grid(row=1, column=1, pady=35)
 
     def eliminar(self):
-        id_empleado = self.entry_i_emp.get()  # Suponiendo que el RUT está en esta entrada
+        id_empleado = self.entry_i_emp.get()
 
         emp = Administrador.Eliminar_empleado(self, id_empleado)  # Llamar a la función Eliminar_empleado
 
@@ -965,13 +993,72 @@ class Login:
         messagebox.showinfo("Eliminación", "Empleado eliminado correctamente.")
         self.v_d_emp.destroy()
 
+    ########VENTANA RECUPERAR EMPLEADO########
+
+    def v_re_emp(self):
+        self.v_re_emp = Tk()
+        self.v_re_emp.geometry("500x400")
+        self.v_re_emp.title("Recuperar Empleado")
+
+        fondo4 = "#ff6347"
+
+        self.frame_superior = Frame(self.v_re_emp)
+        self.frame_superior.configure(bg=fondo4)
+        self.frame_superior.pack(fill="both", expand=True)
+
+        self.frame_inferior = Frame(self.v_re_emp)
+        self.frame_inferior.configure(bg=fondo4)
+        self.frame_inferior.pack(fill="both", expand=True)
+
+        self.frame_inferior.columnconfigure(0, weight=1)
+        self.frame_inferior.columnconfigure(1, weight=1)
+
+        self.titulo_e_emp = Label(self.frame_superior,
+                                  text="Recuperar Empleado",
+                                  font=("Calisto MT", 36, "bold"),
+                                  bg=fondo4)
+        self.titulo_e_emp.pack(side="top", pady=20)
+
+        ###IDEMPLEADO###
+
+        self.label_i_emp = Label(self.frame_inferior,
+                                 text="ID del empleado",
+                                 font=("Arial", 18),
+                                 bg=fondo4,
+                                 fg="black")
+        self.label_i_emp.grid(row=0, column=0, padx=10, sticky="e")
+        self.entry_i_emp = Entry(self.frame_inferior,
+                                 bd=0,
+                                 width=14,
+                                 font=("Arial", 18))
+        self.entry_i_emp.grid(row=0, column=1, columnspan=3, padx=5, sticky="w")
+
+        self.boton_eliminar = Button(self.frame_inferior,
+                                     text="Eliminar",
+                                     width=16,
+                                     font=("Arial", 12),
+                                     command=self.recuperar)
+        self.boton_eliminar.grid(row=1, column=1, pady=35)
+
+    def recuperar(self):
+        id_empleado = self.entry_i_emp.get()
+
+
+        emp = Administrador.Recuperar_empleado(self, id_empleado)
+
+
+        messagebox.showinfo("Recuperación", "Empleado recuperado correctamente.")
+        self.v_re_emp.destroy()
+
+
+
     ########VENTANA CREAR DEPARTAMENTO########
     def v_c_d(self):
         self.v_c_d = Tk()
-        self.v_c_d.geometry("400x700")
+        self.v_c_d.geometry("600x400")
         self.v_c_d.title("Crear Departamento")
 
-        fondo4 = "#9fbbf3"
+        fondo4 = "#ff6347"
 
         self.frame_superior = Frame(self.v_c_d)
         self.frame_superior.configure(bg=fondo4)
@@ -1049,10 +1136,10 @@ class Login:
 
     def v_e_d(self):
         self.v_e_d = Tk()
-        self.v_e_d.geometry("400x700")
+        self.v_e_d.geometry("600x400")
         self.v_e_d.title("Editar Departamento")
 
-        fondo4 = "#9fbbf3"
+        fondo4 = "#ff6347"
 
         self.frame_superior = Frame(self.v_e_d)
         self.frame_superior.configure(bg=fondo4)

@@ -105,6 +105,15 @@ class Administrador(Empleado):
             self.conexion.close()
 
     def Eliminar_empleado(self, id_empleado):
+        # Validar que id_empleado no esté vacío
+        if not id_empleado:
+            print("El campo id_empleado está vacío. Operación cancelada.")
+            return
+
+        # Limpiar el valor de entrada
+        id_empleado = id_empleado.strip()
+        print(f"Valor recibido para id_empleado: '{id_empleado}'")
+
         try:
             # Conexión a la base de datos
             self.conexion = pymysql.connect(
@@ -120,30 +129,101 @@ class Administrador(Empleado):
             return
 
         # Verificar si el empleado existe
-        consulta = "SELECT * FROM empleado WHERE id_empleado = %s"
-        self.prueba.execute(consulta, (id_empleado,))
-        resultado = self.prueba.fetchone()
-
-        if not resultado:
-            print(f"No existe un empleado con id_empleado={id_empleado}")
-            self.conexion.close()
-            return
-
-        # Cambiar el estado del empleado a 0 (inactivo/eliminado)
         try:
+            consulta = "SELECT * FROM empleado WHERE id_empleado = %s"
+            self.prueba.execute(consulta, (id_empleado,))
+            resultado = self.prueba.fetchone()
+
+            if not resultado:
+                print(f"No existe un empleado con id_empleado={id_empleado}")
+                self.conexion.close()
+                return
+
+            print(f"Empleado encontrado: {resultado}")
+
+            # Cambiar el estado del empleado a 0 (inactivo/eliminado)
             actualizar_estado = """UPDATE empleado 
                                    SET estado = 0
                                    WHERE id_empleado = %s"""
             self.prueba.execute(actualizar_estado, (id_empleado,))
+            self.conexion.commit()
 
-            # Verificar cuántas filas se actualizaron
-            if self.prueba.rowcount > 0:
-                print(f"Empleado con id_empleado={id_empleado} eliminado correctamente.")
-                self.conexion.commit()
+            # Verificar el estado actualizado
+            verificar_cambio = "SELECT estado FROM empleado WHERE id_empleado = %s"
+            self.prueba.execute(verificar_cambio, (id_empleado,))
+            nuevo_estado = self.prueba.fetchone()
+
+            if nuevo_estado and nuevo_estado[0] == 0:
+                print(
+                    f"Empleado con id_empleado={id_empleado} eliminado correctamente (estado cambiado a {nuevo_estado[0]}).")
             else:
-                print(f"No se pudo eliminar el empleado con id_empleado={id_empleado}.")
+                print(f"Error: El estado del empleado con id_empleado={id_empleado} no cambió.")
         except Exception as e:
-            print(f"Error al cambiar el estado del empleado: {e}")
+            print(f"Error al intentar eliminar el empleado: {e}")
+        finally:
+            self.conexion.close()
+
+    def Recuperar_empleado(self, id_empleado):
+        # Validar que id_empleado no esté vacío
+        if not id_empleado:
+            print("El campo id_empleado está vacío. Operación cancelada.")
+            return
+
+        # Limpiar el valor de entrada
+        id_empleado = id_empleado.strip()
+        print(f"Valor recibido para id_empleado: '{id_empleado}'")
+
+        try:
+            # Conexión a la base de datos
+            self.conexion = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='',
+                db='prueba2'
+            )
+            self.prueba = self.conexion.cursor()
+            print("Conexión a la base de datos correcta.")
+        except Exception as e:
+            print(f"Error de conexión a la base de datos: {e}")
+            return
+
+        # Verificar si el empleado existe y está inactivo
+        try:
+            consulta = "SELECT estado FROM empleado WHERE id_empleado = %s"
+            self.prueba.execute(consulta, (id_empleado,))
+            resultado = self.prueba.fetchone()
+
+            if not resultado:
+                print(f"No existe un empleado con id_empleado={id_empleado}")
+                self.conexion.close()
+                return
+
+            # Verificar si el empleado está inactivo (estado = 0)
+            estado_actual = resultado[0]
+            if estado_actual == 1:
+                print(f"El empleado con id_empleado={id_empleado} ya está activo.")
+                self.conexion.close()
+                return
+
+            # Cambiar el estado del empleado a 1 (activo)
+            actualizar_estado = """UPDATE empleado 
+                                   SET estado = 1
+                                   WHERE id_empleado = %s"""
+            self.prueba.execute(actualizar_estado, (id_empleado,))
+            self.conexion.commit()
+
+            # Verificar el cambio de estado
+            verificar_cambio = "SELECT estado FROM empleado WHERE id_empleado = %s"
+            self.prueba.execute(verificar_cambio, (id_empleado,))
+            nuevo_estado = self.prueba.fetchone()
+
+            if nuevo_estado and nuevo_estado[0] == 1:
+                print(
+                    f"Empleado con id_empleado={id_empleado} recuperado correctamente (estado cambiado a {nuevo_estado[0]}).")
+            else:
+                print(f"Error: El estado del empleado con id_empleado={id_empleado} no cambió.")
+        except Exception as e:
+            print(f"Error al intentar recuperar el empleado: {e}")
         finally:
             self.conexion.close()
 
